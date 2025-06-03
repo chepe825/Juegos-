@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa Mental: Revolución Industrial Británica</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Variables CSS para la paleta de colores */
+    :root {
+      --color-primary: #3498db;
+      /* Azul */
+      --color-secondary: #e74c3c;
+      /* Rojo */
+      --color-success: #2ecc71;
+      /* Verde */
+      --color-bg: #f0f0f0;
+      /* Gris claro */
+      --color-text: #333;
+      /* Gris oscuro */
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--color-primary);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fff;
+      padding: 10px 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+      /* Transición suave */
+    }
+
+    .controls:hover {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      /* Sutil elevación */
+    }
+
+    #resetBtn {
+      background-color: var(--color-primary);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #resetBtn:hover {
+      background-color: darken(var(--color-primary), 10%);
+      /* Oscurecer al hacer hover */
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      gap: 20px;
+    }
+
+    .dropzone {
+      background-color: #fff;
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      min-height: 200px;
+      margin-bottom: 20px;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+    .dropzone.correct {
+      border-color: var(--color-success);
+      background-color: #f0f9f4;
+    }
+
+    .dropzone h3,
+    .draggables h3 {
+      margin: 0 0 8px;
+      color: var(--color-primary);
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    .dropzone>div {
+      margin: 6px 0;
+      padding: 6px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+    }
+
+    .draggables ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .draggables li {
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      cursor: grab;
+      transition: all 0.3s ease;
+    }
+
+    .draggables li:hover {
+      transform: translateY(-2px);
+      /* Elevación sutil */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .draggables li[data-wrongs="1"] {
+      background-color: #fff3cd;
+    }
+
+    .draggables li[data-wrongs="2"] {
+      background-color: #ffe5b4;
+    }
+
+    .draggables li[data-wrongs="3"] {
+      background-color: #f8d7da;
+      animation: pulse-error 1s infinite;
+      /* Animación de pulso */
+    }
+
+    @keyframes pulse-error {
+      0% {
+        background-color: #f8d7da;
+      }
+
+      50% {
+        background-color: #f2c9cc;
+      }
+
+      100% {
+        background-color: #f8d7da;
+      }
+    }
+
+    .message {
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      opacity: 0;
+      animation: fade-in-out 2s forwards;
+      /* Animación de aparición y desaparición */
+    }
+
+    @keyframes fade-in-out {
+      0%,
+      100% {
+        opacity: 0;
+      }
+
+      10%,
+      90% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Revolución Industrial Británica</h1>
+  <div class="controls">
+    <div>💯 Puntos: <strong id="score">0</strong></div>
+    <div>⏱ Tiempo: <span id="timer">60</span>s</div>
+    <button id="resetBtn">Reiniciar</button>
+  </div>
+  <div class="message" id="msg"></div>
+  <div class="container">
+    <div>
+      <div class="dropzone" data-cat="A">
+        <h3>Transformaciones agrarias y capital</h3>
+      </div>
+      <div class="dropzone" data-cat="B">
+        <h3>Innovación tecnológica y producción</h3>
+      </div>
+      <div class="dropzone" data-cat="C">
+        <h3>Cambios en la vida social y laboral</h3>
+      </div>
+    </div>
+    <div class="draggables">
+      <h3>Opciones</h3>
+      <ul id="list"></ul>
+    </div>
+    <div>
+      <div class="dropzone" data-cat="D">
+        <h3>Definición de la Revolución Industrial</h3>
+      </div>
+      <div class="dropzone" data-cat="E">
+        <h3>Intervención estatal</h3>
+      </div>
+      <div class="dropzone" data-cat="F">
+        <h3>Imperio y economía global</h3>
+      </div>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const listEl = document.getElementById('list');
+      const scoreEl = document.getElementById('score');
+      const timerEl = document.getElementById('timer');
+      const msgEl = document.getElementById('msg');
+      const resetBtn = document.getElementById('resetBtn');
+      const zones = [...document.querySelectorAll('.dropzone')];
+      const data = [
+        "La rotación de cultivos y el arado de hierro multiplicaron la producción agrícola y, al cercar tierras comunales, liberaron recursos que impulsaron la inversión en industria.|A",
+        "Los excedentes agrícolas y los beneficios del comercio ultramarino generaron fondos esenciales para financiar fábricas textiles y siderúrgicas.|A",
+        "Al ser expulsados de sus tierras, miles de campesinos migraron a las ciudades y se convirtieron en la principal fuerza laboral en las fábricas.|A",
+        "Cuando las granjas producían más de lo necesario, los excedentes fluyeron del campo a la ciudad para financiar la industria y promover nuevas innovaciones.|A",
+        "Aunque muchas invenciones eran adaptaciones sencillas de herramientas previas, elevaron la producción fabril tanto que las ganancias se dispararon y atrajeron más inversores.|B",
+        "Quienes mejoraron la máquina de vapor y el telar mecánico lograron que las fábricas dejaran de depender de ríos y aumentaran mucho la producción diaria.|B",
+        "La mezcla de saberes de artesanos y descubrimientos científicos dio lugar a inventos como la lanzadera volante, que tejía telas a una velocidad hasta cuatro veces mayor.|B",
+        "Al fundir hierro con carbón de coque se consiguió un metal más resistente, permitiendo fabricar máquinas con piezas que duraran más.|B",
+        "La incorporación de silbatos y relojes en las fábricas cambió el ritmo de vida: ya no se regía por las estaciones, sino por horarios estrictos marcados por el patrón.|C",
+        "Al ser despojados de sus tierras y medios de producción, miles de campesinos migraron a las ciudades en busca de empleo en las fábricas.|C",
+        "Surgió una clara división entre una clase de dueños de fábricas con poder económico y una creciente fuerza obrera que debía vender su trabajo por sueldos mínimos.|C",
+        "Vivir en barrios industriales implicaba habitar casas con mala ventilación y servicios básicos casi inexistentes, lo cual afectaba la salud comunitaria.|C",
+        "Solo Gran Bretaña logró, entre 1780 y 1800, combinar recursos, mano de obra y apoyo estatal para iniciar esta transformación histórica.|D",
+        "El concepto de “take-off” describe cómo un encadenamiento de cambios técnicos y sociales creó un crecimiento continuo sin años de estancamiento.|D",
+        "Este proceso cambió la forma de trabajar, reorganizó las estructuras sociales y redefinió la relación entre el Estado y la economía.|D",
+        "La Revolución Industrial no se redujo a innovaciones técnicas aisladas; fue un proceso de múltiples relaciones que implicó al campo, la ciencia y un Estado imperial.|D",
+        "Las normas que protegían la propiedad privada y cercaron tierras comunales favorecieron a los rentistas y marginaron a los pequeños labradores.|E",
+        "El gobierno destinó recursos a construir canales y caminos y luego otorgó concesiones a empresas privadas para su explotación.|E",
+        "A través de decretos, se limitaron las importaciones de productos competidores y se protegió el mercado nacional de la industria emergente.|E",
+        "Se crearon patentes y tribunales especiales para garantizar que los inventores recibieran reconocimiento y no perdieran sus derechos sobre las máquinas.|E",
+        "El intercambio constante de materias primas y manufacturas creó una red económica global donde los imperios dependían de sus colonias.|F",
+        "Gracias a acuerdos comerciales y al poder naval, Gran Bretaña vendía máquinas y bienes industriales en puertos de Asia, África y América.|F",
+        "El algodón enviado desde las colonias alimentaba los telares británicos, y los tejidos terminados regresaban como productos de lujo a esos mismos territorios.|F",
+        "Las colonias suministraban minerales y combustible a bajo costo, lo que abarataba la producción de hierro y acero en las fábricas europeas.|F"
+      ].map(t => {
+        const [text, cat] = t.split('|');
+        return {
+          text,
+          cat
+        }
+      });
+      let remaining = [...data];
+      let batch = [];
+      let score = 0,
+        timer, firstTurn = true;
+      const wrongs = {};
+
+      function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      function updateScore(v) {
+        score += v;
+        scoreEl.textContent = score;
+      }
+
+      function startTimer(sec) {
+        clearInterval(timer);
+        timerEl.textContent = sec;
+        timer = setInterval(() => {
+          sec--;
+          timerEl.textContent = sec;
+          if (sec === 0) {
+            clearInterval(timer);
+            msgEl.textContent = '⏰ Tiempo agotado. -1 punto.';
+            updateScore(-1);
+            nextBatch();
+          }
+        }, 1000);
+      }
+
+      function renderList() {
+        listEl.innerHTML = '';
+        const frag = document.createDocumentFragment();
+        batch.forEach(it => {
+          const li = document.createElement('li');
+          li.textContent = it.text;
+          li.dataset.cat = it.cat;
+          const w = wrongs[it.text] || 0;
+          if (w) li.dataset.wrongs = w;
+          li.draggable = true;
+          li.ondragstart = e => e.dataTransfer.setData('text/plain', it.text);
+          frag.appendChild(li);
+        });
+        listEl.appendChild(frag);
+      }
+
+      function nextBatch() {
+        if (!remaining.length && batch.length === 0) {
+          msgEl.textContent = '🎉 Completado';
+          clearInterval(timer);
+          return;
+        }
+
+        let numItems = 0;
+        if (firstTurn) {
+          numItems = 5;
+        } else if (remaining.length > 5) {
+          numItems = 3;
+        } else {
+          numItems = 1;
+        }
+
+        batch = shuffle(remaining).slice(0, numItems);
+        renderList();
+        startTimer(firstTurn ? 60 : 40);
+        firstTurn = false;
+      }
+
+      zones.forEach(z => {
+        z.ondragover = e => e.preventDefault();
+        z.ondrop = e => {
+          e.preventDefault();
+          clearInterval(timer);
+          const text = e.dataTransfer.getData('text/plain');
+          const item = batch.find(it => it.text === text);
+          const correct = item.cat === z.dataset.cat;
+          if (correct) {
+            z.classList.add('correct');
+            const div = document.createElement('div');
+            div.textContent = text;
+            z.appendChild(div);
+            remaining = remaining.filter(it => it.text !== text);
+            updateScore(2);
+            msgEl.textContent = '✅ +2';
+          } else {
+            wrongs[text] = (wrongs[text] || 0) + 1;
+            updateScore(-1);
+            msgEl.textContent = '🔴 -1';
+          }
+          batch = batch.filter(it => it.text !== text);
+          nextBatch();
+        };
+      });
+
+      resetBtn.onclick = () => {
+        zones.forEach(z => {
+          z.classList.remove('correct');
+          [...z.querySelectorAll('div')].forEach(d => d.remove());
+        });
+        remaining = [...data];
+        score = 0;
+        firstTurn = true;
+        Object.keys(wrongs).forEach(k => delete wrongs[k]);
+        msgEl.textContent = '';
+        updateScore(0);
+        nextBatch();
+      };
+
+      nextBatch();
+    })();
+  </script>
+</body>
+
+</html>
